@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizador de Sentimiento - Caso 5</title>
+<style>
+body{font-family: Arial; background:#f2f2f2; padding:20px}
+.contenedor{background:white; max-width:700px; margin:auto; padding:20px; border-radius:10px}
+h1{text-align:center}
+textarea{width:100%; height:80px; padding:10px; font-size:16px}
+button{padding:10px 15px; margin:5px 5px 5px 0; cursor:pointer; border:none; border-radius:5px; background:#007bff; color:white}
+button:hover{background:#0056b3}
+#resultado{text-align:center; font-size:24px; font-weight:bold; padding:15px; margin-top:15px; border-radius:8px; background:#eee}
+.positivo{background:#d4edda !important; color:#155724}
+.negativo{background:#f8d7da !important; color:#721c24}
+.neutral{background:#e2e3e5 !important; color:#383d41}
+.contadores{display:flex; justify-content:space-between; margin-top:15px; text-align:center}
+.contadores div{background:#f8f9fa; padding:10px; border-radius:8px; width:30%}
+table{width:100%; border-collapse:collapse; margin-top:20px}
+th,td{border:1px solid #ccc; padding:8px; text-align:left}
+th{background:#007bff; color:white}
+</style>
+</head>
+<body>
+<div class="contenedor">
+<h1>Analizador de Sentimiento</h1>
+<p>Escribe un comentario de un cliente y el agente lo clasificará.</p>
+
+<textarea id="comentario" placeholder="Ejemplo: Me encantó el servicio, muy bueno y rápido"></textarea><br>
+<button onclick="analizar()">Analizar comentario</button>
+
+<h3>Ejemplos de prueba:</h3>
+<button onclick="probar('Me encantó el servicio, muy bueno y rápido')">Ejemplo Positivo</button>
+<button onclick="probar('Pésimo servicio, muy lento y grosero')">Ejemplo Negativo</button>
+<button onclick="probar('El producto llegó el martes')">Ejemplo Neutral</button>
+
+<div id="resultado">Escribe un comentario y dale Analizar</div>
+
+<div class="contadores">
+<div><b>Positivos</b><br><span id="cPos">0</span></div>
+<div><b>Negativos</b><br><span id="cNeg">0</span></div>
+<div><b>Neutrales</b><br><span id="cNeu">0</span></div>
+</div>
+
+<h3>Base de Datos - Tabla comentarios</h3>
+<table>
+<tr><th>id</th><th>texto</th><th>sentimiento</th><th>fecha</th></tr>
+<tr><td>1</td><td>Me encantó el servicio, muy bueno</td><td>Positivo</td><td>19/11/2026</td></tr>
+<tr><td>2</td><td>Pésimo servicio, muy lento</td><td>Negativo</td><td>19/11/2026</td></tr>
+<tr><td>3</td><td>El producto llegó el martes</td><td>Neutral</td><td>19/11/2026</td></tr>
+<tbody id="tabla"></tbody>
+</table>
+
+</div>
+
+<script>
+let pos=0, neg=0, neu=0, id=4;
+let positivas=["encanto","encantó","bueno","buena","excelente","genial","rapido","rápido","feliz","increible","increíble","maravilloso","perfecto","amable","recomiendo"];
+let negativas=["pesimo","pésimo","malo","mala","lento","grosero","horrible","terrible","molesto","enojo","enojado","decepcion","decepción","nunca","feo","caro"];
+
+function analizar(){
+  let texto=document.getElementById("comentario").value;
+  if(texto.trim()==""){
+    alert("Escribe un comentario");
+    return;
+  }
+  let t=texto.toLowerCase();
+  let p=0, n=0;
+  for(let palabra of positivas){ if(t.includes(palabra)) p++; }
+  for(let palabra of negativas){ if(t.includes(palabra)) n++; }
+
+  let resultado="", clase="";
+  if(p>n){ resultado="POSITIVO"; clase="positivo"; pos++; }
+  else if(n>p){ resultado="NEGATIVO"; clase="negativo"; neg++; }
+  else{ resultado="NEUTRAL"; clase="neutral"; neu++; }
+
+  let res=document.getElementById("resultado");
+  res.textContent=resultado;
+  res.className=clase;
+  document.getElementById("cPos").textContent=pos;
+  document.getElementById("cNeg").textContent=neg;
+  document.getElementById("cNeu").textContent=neu;
+
+  let tabla=document.getElementById("tabla");
+  let fecha=new Date().toLocaleDateString();
+  tabla.innerHTML += "<tr><td>"+id+"</td><td>"+texto+"</td><td>"+resultado+"</td><td>"+fecha+"</td></tr>";
+  id++;
+}
+function probar(texto){
+  document.getElementById("comentario").value=texto;
+  analizar();
+}
+</script>
+</body>
+</html>
